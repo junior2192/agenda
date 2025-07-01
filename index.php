@@ -38,18 +38,37 @@ $tanggalLengkap = $now->format('d-m-Y');
       color: white;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .live-clock {
       font-size: 2.5rem;
       font-weight: bold;
     }
+
     .tanggal-box {
       text-align: center;
       background: #2d2d2d;
     }
+
     .agenda-card .card-body {
       font-size: 1.6rem;
+    }
+
+    .running-text {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: #ffc107;
+      color: #000;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 8px 0;
+      z-index: 999;
+    }
+
+    .running-text marquee {
+      padding: 0 10px;
     }
   </style>
 </head>
@@ -97,7 +116,6 @@ $tanggalLengkap = $now->format('d-m-Y');
                       <?= htmlspecialchars($item['disposisi'] ?: '-') ?>
                     </div>
                   </div>
-                  <!-- <a href="data.php" class="btn <?= $isActive ? 'btn-danger' : 'btn-outline-success' ?> btn-lg mt-3">+ Agenda</a> -->
                 </div>
               </div>
             </div>
@@ -132,6 +150,13 @@ $tanggalLengkap = $now->format('d-m-Y');
     </div>
   </div>
 
+  <!-- Running Text -->
+  <div class="running-text">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+      Selamat datang di ruang PPK Perencanaan & Program. Pastikan semua agenda hari ini berjalan lancar. Tetap semangat dan jaga kesehatan!
+    </marquee>
+  </div>
+
   <!-- Jam Realtime -->
   <script>
     function updateLiveClock() {
@@ -155,13 +180,11 @@ $(function(){
 
   $.getJSON(url)
     .done(res => {
-      console.log(res);
+      const lokasi = res.lokasi
+      console.log(lokasi);
       
       const semuaCuacaNested = res?.data?.[0]?.cuaca ?? [];
       const semuaCuaca = semuaCuacaNested.flat();
-
-      console.log(semuaCuaca);
-      
 
       const hariIni = new Date();
       const yyyy = hariIni.getFullYear();
@@ -169,22 +192,15 @@ $(function(){
       const dd = String(hariIni.getDate()).padStart(2, '0');
       const tanggalSekarang = `${yyyy}-${mm}-${dd}`;
 
-      // Ambil semua data local_datetime dengan tanggal hari ini dan jam <= 22
       const cuacaHariIni = semuaCuaca.filter(item => {
         const dt = item.local_datetime;
         if (!dt.startsWith(tanggalSekarang)) return false;
-
         const jam = new Date(dt).getHours();
         return jam >= 0 && jam <= 22;
       });
 
       if (cuacaHariIni.length === 0) {
-        $('#weatherInner').html(`
-          <div class="carousel-item active">
-            <div class="bg-secondary text-white p-4 rounded shadow-sm text-center">
-              Cuaca hari ini tidak tersedia.
-            </div>
-          </div>`);
+        $('#weatherInner').html(`<div class="carousel-item active"><div class="bg-secondary text-white p-4 rounded shadow-sm text-center">Cuaca hari ini tidak tersedia.</div></div>`);
         return;
       }
 
@@ -195,33 +211,39 @@ $(function(){
           minute: '2-digit'
         });
 
-        slides += `
-          <div class="carousel-item ${i === 0 ? 'active' : ''}">
-            <div class="bg-secondary text-white p-4 rounded shadow-sm text-center" style="font-size:1.1rem;">
-              <img src="${item.image}" alt="${item.weather_desc}" style="height:70px; margin-bottom:10px;" />
-              <h5>${item.weather_desc}</h5>
-              <div class="mb-2"><strong>${waktu}</strong></div>
-              <div><i class="bi bi-thermometer-half me-1"></i> ${item.t}°C</div>
-              <div><i class="bi bi-droplet-fill me-1"></i> Kelembapan: ${item.hu}%</div>
-              <div><i class="bi bi-wind me-1"></i> Angin: ${item.ws} km/j (${item.wd})</div>
+        slides += `<div class="carousel-item ${i === 0 ? 'active' : ''}">
+          <div class="bg-secondary text-white p-4 rounded shadow-sm" style="font-size:1.1rem; min-height: 200px;">
+            <div class="text-center mb-3">
+              <img src="${item.image}" alt="${item.weather_desc}" style="height:60px; margin-bottom:5px;" />
+              <h5 class="mb-1">${item.weather_desc}</h5>
+              <div class=""><i class="bi bi-clock me-1"></i><strong>${waktu}</strong></div>
             </div>
-          </div>`;
+            <div class="row text-start">
+              <div class="col-6">
+                <div class="mb-2"><i class="bi bi-thermometer-half me-1"></i> Suhu: ${item.t}°C</div>
+                <div class="mb-2"><i class="bi bi-droplet-fill me-1"></i> Kelembapan: ${item.hu}%</div>
+              </div>
+              <div class="col-6">
+                <div class="mb-2"><i class="bi bi-wind me-1"></i> Angin: ${item.ws} km/j</div>
+                <div class="mb-2"><i class="bi bi-compass me-1"></i> Arah: ${item.wd}</div>
+              </div>
+            </div>
+            <div class="mt-3 text-center fw-semibold small">
+              <i class="bi bi-geo-alt-fill me-1"></i>
+              ${lokasi.desa}, ${lokasi.kecamatan}, ${lokasi.kotkab}, ${lokasi.provinsi}
+            </div>
+          </div>
+        </div>`;
       });
 
       $('#weatherInner').html(slides);
     })
     .fail(() => {
-      $('#weatherInner').html(`
-        <div class="carousel-item active">
-          <div class="bg-secondary text-white p-4 rounded text-center">Gagal memuat cuaca.</div>
-        </div>`);
+      $('#weatherInner').html(`<div class="carousel-item active"><div class="bg-secondary text-white p-4 rounded text-center">Gagal memuat cuaca.</div></div>`);
     });
 });
 </script>
 
-
-
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
