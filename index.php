@@ -158,19 +158,21 @@ $tanggalLengkap = $now->format('d-m-Y');
   </div>
 
   <!-- Jam Realtime -->
-  <script>
+    <script>
     function updateLiveClock() {
       const now = new Date();
-      document.getElementById('liveClock').textContent =
-        now.toLocaleTimeString('id-ID', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
+
+      const jam = String(now.getHours()).padStart(2, '0');
+      const menit = String(now.getMinutes()).padStart(2, '0');
+      const detik = String(now.getSeconds()).padStart(2, '0');
+
+      document.getElementById('liveClock').textContent = `${jam}:${menit}:${detik}`;
     }
+
     setInterval(updateLiveClock, 1000);
     updateLiveClock();
   </script>
+
 
   <!-- Cuaca BMKG Carousel -->
   <script>
