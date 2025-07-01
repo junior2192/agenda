@@ -129,14 +129,16 @@ $tanggalLengkap = $now->format('d-m-Y');
       </div>
 
       <!-- Bagian Kanan: Hari, Tanggal, Cuaca -->
-      <div class="col-md-4 bg-dark text-white p-4 position-relative">
+      <div class="col-md-4 bg-dark text-white p-4 pt-5 mt-5 position-relative">
+
+
         <div class="tanggal-box mb-4 p-4 rounded shadow-sm">
           <h1 style="font-size: 4rem;"><?= $hari ?></h1>
           <div style="height: 5px; width: 80px; margin: 10px auto; background: #00d9ff;"></div>
           <h2 style="font-size: 2.5rem;"><?= $tanggalLengkap ?></h2>
         </div>
 
-        <div id="weatherCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="8000">
+        <div id="weatherCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="8000" >
           <div class="carousel-inner" id="weatherInner">
             <div class="carousel-item active">
               <div class="bg-secondary text-white p-4 rounded shadow-sm text-center" style="font-size:1.2rem;">
@@ -150,12 +152,29 @@ $tanggalLengkap = $now->format('d-m-Y');
     </div>
   </div>
 
+  <!-- Toast Container -->
+<!-- Toast Container (di kiri bawah) -->
+<div class="position-fixed start-0 p-3" style="bottom: 80px; z-index: 1100">
+  <div id="dailyToast" class="toast text-white bg-primary" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="7000">
+    <div class="toast-header bg-primary text-white">
+      <strong class="me-auto">Kata-kata Hari Ini</strong>
+      <small>PPK</small>
+      <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body" id="toastMessage">
+      Selamat pagi! Awali hari dengan semangat positif.
+    </div>
+  </div>
+</div>
+
+
   <!-- Running Text -->
   <div class="running-text">
     <marquee behavior="scroll" direction="left" scrollamount="5">
       Selamat datang di ruang PPK Perencanaan & Program. Pastikan semua agenda hari ini berjalan lancar. Tetap semangat dan jaga kesehatan!
     </marquee>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Jam Realtime -->
     <script>
@@ -215,10 +234,10 @@ $(function(){
 
         slides += `<div class="carousel-item ${i === 0 ? 'active' : ''}">
           <div class="bg-secondary text-white p-4 rounded shadow-sm" style="font-size:1.1rem; min-height: 200px;">
-            <div class="text-center mb-3">
+            <div class="text-center mb-5">
               <img src="${item.image}" alt="${item.weather_desc}" style="height:60px; margin-bottom:5px;" />
-              <h5 class="mb-1">${item.weather_desc}</h5>
-              <div class=""><i class="bi bi-clock me-1"></i><strong>${waktu}</strong></div>
+              <h5 class="mb-3">${item.weather_desc}</h5>
+              <div class=""><i class="bi bi-clock me-1 "></i><strong>${waktu}</strong></div>
             </div>
             <div class="row text-start">
               <div class="col-6">
@@ -245,7 +264,51 @@ $(function(){
     });
 });
 </script>
+<script>
+  const pesanHarian = [
+    "Semangat kerja keras dan berkarya hari ini, gaspol!",
+    "Jangan lupa rebahan bentar dan minum air putih, biar nggak oleng!",
+    "Hari ini kesempatan baru buat jadi glow up, yuk bisa yuk!",
+    "Tantangan itu jalan ninjanya buat jadi makin pro.",
+    "Terus maju, kamu kuat banget, cuak!",
+    "Fokusnya ke solusi, jangan bucin sama masalah.",
+    "Jangan insecure, kamu itu limited edition!",
+    "Positive vibes only, biar rezeki makin ngalir deraaas!",
+    "Gas terus, jangan kasih kendor! Masa depan cerah menanti.",
+    "Hidup ini cuma sekali, jadi bikin cerita yang epic!",
+    "Chill aja, tapi tetap on fire pas kerja. Biar balance!",
+    "Jangan lupa senyum, biar aura positifnya terpancar!",
+    "Bikin karya yang bikin orang lain auto bilang 'anj*y keren banget!'",
+    "Jadilah pribadi yang bikin orang lain bilang 'doi emang beda!'",
+    "Skill up terus, biar makin jago di bidangmu, cuak!",
+    "Jangan cuma wacana, langsung action aja!",
+    "Nikmati prosesnya, hasil nggak akan mengkhianati usaha.",
+    "Kalau capek, istirahat. Jangan dipaksain, ntar malah ngelag!",
+    "Hari ini adalah hari buat bikin sejarah, bukan cuma cerita.",
+    "Be yourself, everyone else is already taken. Stay humble!",
+    "Yuk, push limitmu! Kamu bisa lebih dari yang kamu kira!",
+    "Keep strong, badai pasti berlalu. Pelangi itu indah!",
+    "Jangan takut gagal, takutlah kalau nggak pernah mencoba.",
+    "Yuk, bikin hari ini jadi worth it banget!",
+    "Stay fokus, jangan gampang terdistraksi sama hal receh."
+  ];
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  let pesanIndex = 0;
+  const toast = new bootstrap.Toast(document.getElementById('dailyToast'));
+
+  function tampilkanToast() {
+    document.getElementById('toastMessage').textContent = pesanHarian[pesanIndex];
+    toast.show();
+    pesanIndex = (pesanIndex + 1) % pesanHarian.length;
+  }
+
+  // Munculkan toast pertama kali setelah halaman dimuat
+  setTimeout(tampilkanToast, 2000);
+  // Kemudian tiap 30 detik muncul otomatis
+  setInterval(tampilkanToast, 15000);
+</script>
+
+
+
 </body>
 </html>
