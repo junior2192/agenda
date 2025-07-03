@@ -64,8 +64,8 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AGENDA PERENCANAAN</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+  <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/fontawesome/css/all.min.css" crossorigin="anonymous" />
   <style>
     body { font-family: sans-serif; background-color: #f8f9fa; padding: 20px; }
     .section-title { margin-top: 30px; }
@@ -75,6 +75,8 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
 <body class="container">
   <div class="mb-2">
     <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Home</a>
+    <a href="kata.php" class="btn btn-outline-secondary btn-sm">Kata-kata hari ini</a>
+    <a href="marque.php" class="btn btn-outline-secondary btn-sm">Running Text</a>
   </div>
   <h1 class="section-title text-center">DATA AGENDA</h1>
   <div class="row mt-5">
@@ -96,20 +98,16 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
           </div>
           <div class="col-1 text-center d-flex align-items-center justify-content-center">-</div>
           <div class="col-5">
-  <input list="opsi_waktu_selesai" name="waktu_selesai" class="form-control"
-    value="<?= $editAgenda['waktu_selesai'] ?? '' ?>" placeholder="Contoh: 10:00 atau Selesai" required>
-  <datalist id="opsi_waktu_selesai">
-    <?php
-    for ($h = 7; $h <= 18; $h++) {
-      foreach ([0, 30] as $m) {
-        printf('<option value="%02d:%02d">', $h, $m);
-      }
-    }
-    ?>
-    <option value="Selesai">
-    <option value="Sampai selesai">
-  </datalist>
-</div>
+            <input list="opsi_waktu_selesai" name="waktu_selesai" class="form-control"
+              value="<?= $editAgenda['waktu_selesai'] ?? '' ?>" placeholder="Contoh: 10:00 atau Selesai" required>
+            <datalist id="opsi_waktu_selesai">
+              <?php for ($h = 7; $h <= 18; $h++): foreach ([0, 30] as $m): ?>
+                <option value="<?= sprintf('%02d:%02d', $h, $m) ?>">
+              <?php endforeach; endfor; ?>
+              <option value="Selesai">
+              <option value="Sampai selesai">
+            </datalist>
+          </div>
         </div>
         <div class="mb-3">
           <label for="kegiatan" class="form-label">Kegiatan</label>
@@ -124,7 +122,7 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
           <input type="text" id="disposisi" name="disposisi" class="form-control" value="<?= $editAgenda['disposisi'] ?? '' ?>" placeholder="Contoh: Sekretaris">
         </div>
         <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-success"><?= $editAgenda ? ' Update' : ' Simpan' ?></button>
+          <button type="submit" class="btn btn-primary"> <i class="fas fa-save"></i> <?= $editAgenda ? ' Update' : ' Simpan' ?></button>
           <?php if ($editAgenda): ?>
             <a href="data.php" class="btn btn-secondary">Batal</a>
           <?php endif; ?>
@@ -153,9 +151,19 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($agenda as $i => $item): ?>
+            <?php
+              $lastTanggal = null;
+              $counter = 0;
+              foreach ($agenda as $item):
+                if ($item['tanggal'] !== $lastTanggal) {
+                  $counter = 1;
+                  $lastTanggal = $item['tanggal'];
+                } else {
+                  $counter++;
+                }
+            ?>
               <tr data-tanggal="<?= htmlspecialchars($item['tanggal']) ?>">
-                <td class="text-center"><?= $i + 1 ?></td>
+                <td class="text-center"><?= $counter ?></td>
                 <td><?= htmlspecialchars($item['waktu_mulai']) ?> - <?= htmlspecialchars($item['waktu_selesai']) ?></td>
                 <td><?= htmlspecialchars($item['kegiatan']) ?></td>
                 <td><?= htmlspecialchars($item['tempat'] ?? '-') ?></td>
