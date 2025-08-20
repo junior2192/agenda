@@ -88,7 +88,7 @@ $kataList = $db->query("SELECT * FROM kata ORDER BY id DESC")->fetchAll(PDO::FET
               <select name="user" class="form-select" required>
                 <option value="">-- Pilih Pelopor --</option>
                 <?php
-                $users = ["PPK", "Peltek", "Ruli", "Arif", "Shilvy", "Hudan", "Revi", "Uci", "Agus", "Ridwan"];
+                $users = ["PPK", "Peltek", "Ruly", "Arif", "Shilvy", "Hudan", "Revi", "Uci", "Agus", "Ridwan"];
                 foreach ($users as $u): ?>
                   <option value="<?= $u ?>" <?= (isset($editKata) && $editKata['user'] === $u) ? 'selected' : '' ?>><?= $u ?></option>
                 <?php endforeach; ?>
