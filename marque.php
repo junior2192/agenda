@@ -53,6 +53,8 @@ $data = $db->query("SELECT * FROM marque ORDER BY id DESC")->fetchAll(PDO::FETCH
   <a href="index.php" class="btn btn-sm btn-outline-secondary mb-3">&larr; Home</a>
   <a href="data.php" class="btn btn-sm btn-outline-secondary mb-3">Data Agenda</a>
   <a href="kata.php" class="btn btn-sm btn-outline-secondary mb-3">Kata-kata hari ini</a>
+  <a href="datatema.php" class="btn btn-sm btn-outline-secondary mb-3">Tema</a>
+
   <h3 class="mb-4">📰 Kelola Running Text</h3>
 
   <form method="post" class="mb-4">

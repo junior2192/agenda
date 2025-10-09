@@ -67,6 +67,8 @@ $kataList = $db->query("SELECT * FROM kata ORDER BY id DESC")->fetchAll(PDO::FET
     <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Home</a>
     <a href="data.php" class="btn btn-outline-secondary btn-sm">Data Agenda</a>
     <a href="marque.php" class="btn btn-outline-secondary btn-sm">Running Text</a>
+    <a href="datatema.php" class="btn btn-outline-secondary btn-sm">Tema</a>
+
   </div>
 
   <h1 class="section-title text-center">📝 Kata Hari Ini</h1>

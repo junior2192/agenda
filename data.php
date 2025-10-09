@@ -60,6 +60,7 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
 
 // Ambil semua tanggal unik yang ada agenda
 $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -88,6 +89,7 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
     <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Home</a>
     <a href="kata.php" class="btn btn-outline-secondary btn-sm">Kata-kata hari ini</a>
     <a href="marque.php" class="btn btn-outline-secondary btn-sm">Running Text</a>
+    <a href="datatema.php" class="btn btn-outline-secondary btn-sm">Tema</a>
   </div>
   <h1 class="section-title text-center">DATA AGENDA</h1>
   <div class="row mt-2">
