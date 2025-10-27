@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
+
 // Koneksi SQLite
 $db = new PDO('sqlite:agenda.db');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -11,7 +13,8 @@ $db->exec("CREATE TABLE IF NOT EXISTS agenda (
     waktu_selesai TEXT NOT NULL,
     kegiatan TEXT NOT NULL,
     tempat TEXT,
-    disposisi TEXT
+    disposisi TEXT,
+    keterangan TEXT
 )");
 
 // Hapus agenda
@@ -41,15 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $kegiatan      = $_POST['kegiatan'] ?? '';
   $tempat        = $_POST['tempat'] ?? '';
   $disposisi     = $_POST['disposisi'] ?? '';
+  $keterangan    = $_POST['keterangan'] ?? '';
 
   if ($tanggal && $waktu_mulai && $waktu_selesai && $kegiatan) {
     if ($id) {
-      $stmt = $db->prepare("UPDATE agenda SET tanggal=?, waktu_mulai=?, waktu_selesai=?, kegiatan=?, tempat=?, disposisi=? WHERE id=?");
-      $stmt->execute([$tanggal, $waktu_mulai, $waktu_selesai, $kegiatan, $tempat, $disposisi, $id]);
+      $stmt = $db->prepare("UPDATE agenda SET tanggal=?, waktu_mulai=?, waktu_selesai=?, kegiatan=?, tempat=?, disposisi=?, keterangan=? WHERE id=?");
+      $stmt->execute([$tanggal, $waktu_mulai, $waktu_selesai, $kegiatan, $tempat, $disposisi, $keterangan, $id]);
     } else {
-      $stmt = $db->prepare("INSERT INTO agenda (tanggal, waktu_mulai, waktu_selesai, kegiatan, tempat, disposisi)
-                            VALUES (?, ?, ?, ?, ?, ?)");
-      $stmt->execute([$tanggal, $waktu_mulai, $waktu_selesai, $kegiatan, $tempat, $disposisi]);
+      $stmt = $db->prepare("INSERT INTO agenda (tanggal, waktu_mulai, waktu_selesai, kegiatan, tempat, disposisi, keterangan)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $stmt->execute([$tanggal, $waktu_mulai, $waktu_selesai, $kegiatan, $tempat, $disposisi, $keterangan]);
     }
     header("Location: data.php");
     exit;
@@ -61,6 +65,7 @@ $agenda = $db->query("SELECT * FROM agenda ORDER BY tanggal, waktu_mulai")->fetc
 // Ambil semua tanggal unik yang ada agenda
 $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
 
+$current = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -82,16 +87,77 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
       color: white !important;
       border-radius: 50% !important;
     }
+
+    
   </style>
 </head>
 <body class="container">
-  <div class="mb-2">
-    <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Home</a>
-    <a href="kata.php" class="btn btn-outline-secondary btn-sm">Kata-kata hari ini</a>
-    <a href="marque.php" class="btn btn-outline-secondary btn-sm">Running Text</a>
-    <a href="datatema.php" class="btn btn-outline-secondary btn-sm">Tema</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="index.php">
+      <i class="fas fa-calendar-alt me-2"></i>Agenda Perencanaan
+    </a>
+
+    <!-- Tombol hamburger -->
+    <button class="navbar-toggler border-0" type="button" 
+            data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'index.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="index.php">
+            <i class="fas fa-home me-1"></i> Home
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'data.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="data.php">
+            <i class="fas fa-list me-1"></i> Data Agenda
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'kata.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="kata.php">
+            <i class="fas fa-quote-left me-1"></i> Kata Hari Ini
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'marque.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="marque.php">
+            <i class="fas fa-newspaper me-1"></i> Running Text
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'datatema.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="datatema.php">
+            <i class="fas fa-palette me-1"></i> Tema
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $current == 'setting.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="setting.php">
+            <i class="fas fa-cog me-1"></i> Pengaturan
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
-  <h1 class="section-title text-center">DATA AGENDA</h1>
+</nav>
+
+<!-- Tambahkan padding agar konten tidak ketiban navbar -->
+<div style="padding-top: 80px;"></div>
+    
+
+  <!-- <div class="container">
+    <h2 class="text-center mb-4 fw-bold">
+      <i class="fas fa-calendar-check me-2"></i>DATA AGENDA
+    </h2>
+  </div> -->
   <div class="row mt-2">
     <!-- Form Tambah/Edit Agenda -->
     <div class="col-md-4">
@@ -134,8 +200,13 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
 
         <div class="mb-3">
           <label for="disposisi" class="form-label">Disposisi</label>
-          <input type="text" id="disposisi" name="disposisi" class="form-control" value="<?= $editAgenda['disposisi'] ?? '' ?>" placeholder="Contoh: Sekretaris">
+          <textarea id="disposisi" name="disposisi" class="form-control" rows="2" placeholder="Contoh: Sekretaris"><?= $editAgenda['disposisi'] ?? '' ?> </textarea>
         </div>
+        <div class="mb-3">
+          <label for="keterangan" class="form-label">Keterangan</label>
+          <textarea name="keterangan" id="keterangan" class="form-control" rows="2" placeholder="Contoh: Keterangan"><?= $editAgenda['keterangan'] ?? '' ?></textarea>
+        </div>
+
         <div class="d-grid gap-2">
           <button type="submit" class="btn btn-primary"> <i class="fas fa-save"></i> <?= $editAgenda ? ' Update' : ' Simpan' ?></button>
           <?php if ($editAgenda): ?>
@@ -162,6 +233,7 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
               <th>Agenda</th>
               <th>Tempat</th>
               <th>Disposisi</th>
+              <th>Keterangan</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -183,6 +255,7 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
                 <td><?= htmlspecialchars($item['kegiatan']) ?></td>
                 <td><?= htmlspecialchars($item['tempat'] ?? '-') ?></td>
                 <td><?= htmlspecialchars($item['disposisi'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($item['keterangan'] ?? '-') ?></td>
                 <td class="text-center d-flex">
                   <a href="?edit=<?= $item['id'] ?>" class="btn btn-sm btn-warning me-1" title="Edit">
                     <i class="fas fa-pencil-alt"></i>
@@ -194,7 +267,7 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
               </tr>
             <?php endforeach; ?>
             <?php if (empty($agenda)): ?>
-              <tr><td colspan="6" class="text-center text-muted">Belum ada agenda.</td></tr>
+              <tr><td colspan="7" class="text-center text-muted">Belum ada agenda.</td></tr>
             <?php endif; ?>
           </tbody>
         </table>
@@ -203,6 +276,7 @@ $agendaDates = array_values(array_unique(array_column($agenda, 'tanggal')));
   </div>
 
   <!-- Script -->
+<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
   const agendaDates = <?= json_encode($agendaDates) ?>; // masih array Y-m-d

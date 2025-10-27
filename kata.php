@@ -48,6 +48,9 @@ if (isset($_POST['simpan_kata'])) {
 
 // Ambil semua data kata
 $kataList = $db->query("SELECT * FROM kata ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+
+$current = basename($_SERVER['PHP_SELF']);
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -63,13 +66,58 @@ $kataList = $db->query("SELECT * FROM kata ORDER BY id DESC")->fetchAll(PDO::FET
   </style>
 </head>
 <body class="container">
-  <div class="mb-3">
-    <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Home</a>
-    <a href="data.php" class="btn btn-outline-secondary btn-sm">Data Agenda</a>
-    <a href="marque.php" class="btn btn-outline-secondary btn-sm">Running Text</a>
-    <a href="datatema.php" class="btn btn-outline-secondary btn-sm">Tema</a>
+   <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded mb-4 shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-white" href="index.php">
+        <i class="fas fa-calendar-alt me-2"></i>Agenda Perencanaan
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+
+          <li class="nav-item">
+            <a class="nav-link <?= $current == 'index.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="index.php">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $current == 'data.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="data.php">
+              <i class="fas fa-list me-1"></i> Data Agenda
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $current == 'kata.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="kata.php">
+              <i class="fas fa-quote-left me-1"></i> Kata Hari Ini
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $current == 'marque.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="marque.php">
+              <i class="fas fa-newspaper me-1"></i> Running Text
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $current == 'datatema.php' ? 'active fw-bold bg-white text-primary rounded px-3' : 'text-white'; ?>" href="datatema.php">
+              <i class="fas fa-palette me-1"></i> Tema
+            </a>
+          </li>
+
+            <li class="nav-item">
+            <a class="nav-link text-white" href="setting.php">
+              <i class="fas fa-cog me-1"></i> Pengaturan
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <h1 class="section-title text-center">📝 Kata Hari Ini</h1>
 
@@ -90,7 +138,7 @@ $kataList = $db->query("SELECT * FROM kata ORDER BY id DESC")->fetchAll(PDO::FET
               <select name="user" class="form-select" required>
                 <option value="">-- Pilih Pelopor --</option>
                 <?php
-                $users = ["PPK", "Peltek", "Ruly", "Arif", "Shilvy", "Hudan", "Revi", "Uci", "Agus", "Ridwan"];
+                $users = ["PPK", "Peltek", "Gita", "Ruly", "Arif", "Shilvy", "Hudan", "Revi", "Uci", "Agus", "Ridwan"];
                 foreach ($users as $u): ?>
                   <option value="<?= $u ?>" <?= (isset($editKata) && $editKata['user'] === $u) ? 'selected' : '' ?>><?= $u ?></option>
                 <?php endforeach; ?>

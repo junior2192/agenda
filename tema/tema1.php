@@ -1,3 +1,9 @@
+<?php
+$configFile = __DIR__ . '/../config.json';
+$config = json_decode(file_get_contents($configFile), true);
+?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -35,7 +41,9 @@
   <div class="container-fluid py-3 bg-dark text-white">
     <div class="d-flex justify-content-between align-items-center">
       <div class="live-clock" id="liveClock"></div>
-      <div class="text-end"><h2 class="mb-0">PPK PERENCANAAN & PROGRAM</h2></div>
+      <div class="text-end">
+       <h2 class="mb-0 text-uppercase"><?= htmlspecialchars($config['nama_organisasi'] ?? 'Nama Organisasi') ?></h2>
+      </div>
     </div>
   </div>
 
@@ -81,12 +89,15 @@
 
   <!-- Running Text -->
   <div class="running-text">
-    <marquee behavior="scroll" direction="left" scrollamount="5" id="runningMarquee">
+    <marquee class="pt-3" behavior="scroll" direction="left" scrollamount="5" id="runningMarquee">
       Memuat teks berjalan...
     </marquee>
   </div>
 
   <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const TIPE_KONTEN = "<?= htmlspecialchars($config['tipe_konten'] ?? 'slide show') ?>";
+  </script>
   <script src="assets/js/agenda.js"></script>
 </body>
 </html>

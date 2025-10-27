@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
 // Baca config
 $configFile = __DIR__ . '/config.json';
 $config = json_decode(file_get_contents($configFile), true);

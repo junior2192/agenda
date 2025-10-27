@@ -1,3 +1,9 @@
+<?php
+$configFile = __DIR__ . '/../config.json';
+$config = json_decode(file_get_contents($configFile), true);
+?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -136,6 +142,21 @@
       font-size: 1rem;
       color: #e0e8ff;
     }
+
+    /* Perbaikan tampilan untuk TV / layar besar */
+@media (min-width: 1600px) {
+  body {
+    zoom: 0.9; /* turunkan sedikit agar proporsional di TV */
+  }
+}
+
+/* Jika 4K (TV besar), kecilkan lebih jauh */
+@media (min-width: 2500px) {
+  body {
+    zoom: 0.8;
+  }
+}
+
   </style>
 </head>
 
@@ -144,12 +165,13 @@
   <div class="header">
     <div class="live-clock" id="liveClock"></div>
     <div class="text-end">
-      <h2 class="mb-0">PPK PERENCANAAN & PROGRAM</h2>
+      <h2 class="mb-0 text-uppercase"><?= htmlspecialchars($config['nama_organisasi'] ?? 'Nama Organisasi') ?></h2>
+
     </div>
   </div>
 
   <!-- Main -->
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-2">
     <div class="row h-100">
       <!-- Agenda -->
       <div class="col-md-8 p-3">
@@ -195,13 +217,49 @@
 
   <!-- Running Text -->
   <div class="running-text">
-    <marquee behavior="scroll" direction="left" scrollamount="5" id="runningMarquee">
+    <marquee class="pt-3" behavior="scroll" direction="left" scrollamount="5" id="runningMarquee">
       Memuat teks berjalan...
     </marquee>
   </div>
 
   <!-- Scripts -->
+   <script>
+(function() {
+  const width = window.screen.width;
+  const height = window.screen.height;
+  const ratio = window.devicePixelRatio || 1;
+
+  let scale = 1;
+
+  // Laptop / Full HD (1920x1080)
+  if (width <= 1920) {
+    scale = 1;
+  }
+
+  // TV / Monitor 2K (2560x1440)
+  else if (width <= 2560) {
+    scale = 1.25; // perbesar sedikit agar mirip tampilan 1080p
+  }
+
+  // TV 4K (3840x2160)
+  else if (width >= 3800) {
+    scale = 1.6;
+  }
+
+  document.body.style.transform = `scale(${scale})`;
+  document.body.style.transformOrigin = "top left";
+  document.body.style.width = (100 / scale) + "%";
+  document.body.style.height = (100 / scale) + "%";
+
+  console.log(`Resolution: ${width}x${height}, DPR: ${ratio}, Scale applied: ${scale}`);
+})();
+</script>
+
   <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const TIPE_KONTEN = "<?= htmlspecialchars($config['tipe_konten'] ?? 'slide show') ?>";
+  </script>
   <script src="assets/js/agenda.js"></script>
+  
 </body>
 </html>

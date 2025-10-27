@@ -3,6 +3,7 @@
 header('Content-Type: application/json');
 date_default_timezone_set('Asia/Jakarta');
 $db = new PDO('sqlite:../agenda.db');
+$config = json_decode(file_get_contents(__DIR__ . '/../config.json'), true);
 
 $now = new DateTime();
 $today = $now->format('Y-m-d');
@@ -42,5 +43,6 @@ echo json_encode([
   'kata' => $kataList,
   'running_text' => $marqueeText,
   'hari' => $hari,
-  'tanggal' => $tanggalLengkap
+  'tanggal' => $tanggalLengkap,
+  'tampilan_agenda' => $config['tampilan_agenda'] ?? 'carousel'
 ], JSON_UNESCAPED_UNICODE);
